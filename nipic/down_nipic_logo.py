@@ -9,12 +9,14 @@ import requests
 BASE_URL = 'http://www.nipic.com'
 LOGO_URL = 'http://www.nipic.com/design/7/'
 
-def get_page_num(url):
-    r_page = re.compile(r'&nbsp;共(\d+)页&nbsp;')
-    html = get_html(url)
+def get_page_num():
+    r_page = re.compile(r'<td height="25" class="tahoma" style="padding-left:9">第1页 共(.+?)页.+?</td>', re.DOTALL)
+    page_url = get_page_url(1)
 
-    s = re.findall(r_page, html)
-    return s
+    html = get_html(page_url)
+
+    s = re.findall(r_page, html.decode('gb2312').encode('utf-8'))
+    return int(s[0])
 
 def get_page_url(page_num):
     return LOGO_URL + str(page_num) + '.html'
@@ -29,7 +31,7 @@ def get_html(url):
 
 def get_signal_page(html):
     '''读取单页URL'''
-    prog = re.compile(r'<td style="padding:4"><a href="(.+?)" title=.+? class="hui">(.+?)</a>')
+    prog = re.compile(r'<td style="padding:4"><a href="(.+?)" title=.+? class="hui">.+?</a>')
     url_list = re.findall(prog, html)
 
     return url_list
@@ -53,6 +55,22 @@ def down_pic(pic_url):
     print '保存了', pic_name
 
 def main():
+    all_num = get_page_num()
+    print '共计 %s 页' % all_num
+    print '*'*80
+    count = 1
+    while count <=all_num:
+        page_url = get_page_url(count)
+        count += 1
+        html = get_html(page_url)
+        s_page_url = get_signal_page(html)
+        #print s_page_url
+        for url in s_page_url:
+            #print url
+            pic_url = get_pic_url(url)
+            #print pic_url
+            down_pic(pic_url)
+
     #page_url = get_page_url(1)
     #html = get_html(page_url)
     #page_url = get_signal_page(html)
@@ -62,7 +80,7 @@ def main():
     #print pic_url
     #down_pic(pic_url)
 
-    page_num = get_page_num(LOGO_URL)
-    print page_num, type(page_num)
+    #page_num = get_page_num()
+    #print page_num, type(page_num)
 if __name__ == '__main__':
     main()
