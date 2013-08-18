@@ -9,6 +9,13 @@ import requests
 BASE_URL = 'http://www.nipic.com'
 LOGO_URL = 'http://www.nipic.com/design/7/'
 
+def get_page_num(url):
+    r_page = re.compile(r'&nbsp;共(\d+)页&nbsp;')
+    html = get_html(url)
+
+    s = re.findall(r_page, html)
+    return s
+
 def get_page_url(page_num):
     return LOGO_URL + str(page_num) + '.html'
 
@@ -51,9 +58,11 @@ def main():
     #page_url = get_signal_page(html)
     #print page_url
 
-    pic_url = get_pic_url('/show/8595581.html')
-    print pic_url
-    down_pic(pic_url)
+    #pic_url = get_pic_url('/show/8595581.html')
+    #print pic_url
+    #down_pic(pic_url)
 
+    page_num = get_page_num(LOGO_URL)
+    print page_num, type(page_num)
 if __name__ == '__main__':
     main()
