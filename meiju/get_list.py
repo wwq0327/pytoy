@@ -3,17 +3,38 @@
 # wwq @ 2013-09-26 22:30:40
 
 import re
-from datetime import datetime
+import sys
+import optparse
+import datetime
+#from datetime import datetime
 import requests
 
 URL = 'http://www.yyets.com/tv/schedule'
 
+def month_end_day():
+    '''
+    获取本月最后一天的天数'''
+
+    now = datetime.datetime.today()
+    year = now.year
+    month = now.month
+    if month == 12:
+        end = datetime.date(year+1, 1, 1) - datetime.timedelta(days=1)
+        return end.day
+    else:
+        end = datetime.date(year, month+1, 1) - datetime.timedelta(days=1)
+        #print type(end.day)
+        return end.day
+
 def get_day():
-    today = datetime.today()
+    today = datatime.datetime.today()
     return today.day
 
-def set_day_str():
-    return str(get_day()) + '号'
+def set_day_str(day=False):
+    if not day:
+        return str(get_day()) + '号'
+    else:
+        return str(day) + '号'
 
 def get_html(url):
     r = requests.get(url)
@@ -23,8 +44,8 @@ def get_html(url):
     else:
         return None
 
-def get_day_html(html):
-    day = set_day_str()
+def get_day_html(html, day):
+    #day = set_day_str()
     regex = r'<td class="ihbg">.+?<dt>%s</dt>(.+?)</dl>' % day
     re_day = re.compile(regex, re.DOTALL)
     m = re.findall(re_day, html)
@@ -37,14 +58,30 @@ def get_jm_list(day_html):
     return m
 
 def main():
+    p = optparse.OptionParser(description=u"YYETS每日美剧更新列表",
+            version="0.1",
+            usage="%prog [day]")
+    p.add_option('--day', '-d')
+    options, arguments = p.parse_args()
+    print options, arguments
+    end = month_end_day()
+    if len(arguments) == 0:
+        if options.day:
+            day_num = int(options.day)
+            if isinstance(day_num, int) and 1<=day_num<=end:
+                day = set_day_str(day_num)
+            else:
+                print '输入的天数无效'
+                p.print_help()
+                sys.exit(1)
+    else:
+        p.print_help()
+        sys.exit()
+
     html = get_html(URL)
-    #print html
-    #print '今天是: ', set_day_str()
-    day_html = get_day_html(html)
-    #print day_html
+    day_html = get_day_html(html, day)
     jm_list = get_jm_list(day_html)
-    #print jm_list
-    print '今天的美剧节目有：'
+    print '%s的美剧节目有：' % day
     print '=' * 64
     for i in jm_list:
         print i
