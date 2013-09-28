@@ -27,7 +27,7 @@ def month_end_day():
         return end.day
 
 def get_day():
-    today = datatime.datetime.today()
+    today = datetime.datetime.today()
     return today.day
 
 def set_day_str(day=False):
@@ -63,10 +63,10 @@ def main():
             usage="%prog [day]")
     p.add_option('--day', '-d')
     options, arguments = p.parse_args()
-    print options, arguments
+    #print options, arguments
     end = month_end_day()
-    if len(arguments) == 0:
-        if options.day:
+    if options.day:
+        if len(arguments) == 0:
             day_num = int(options.day)
             if isinstance(day_num, int) and 1<=day_num<=end:
                 day = set_day_str(day_num)
@@ -74,9 +74,11 @@ def main():
                 print '输入的天数无效'
                 p.print_help()
                 sys.exit(1)
+        else:
+            p.print_help()
+            sys.exit()
     else:
-        p.print_help()
-        sys.exit()
+        day = set_day_str() 
 
     html = get_html(URL)
     day_html = get_day_html(html, day)
