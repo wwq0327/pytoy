@@ -75,7 +75,7 @@ def main():
     p = optparse.OptionParser(description=u"YYETS每日美剧更新列表",
             version="0.1",
             usage="%prog [day]")
-    p.add_option('--day', '-d')
+    p.add_option('--day', '-d', help=u'检索当月中指定的美剧节目列表')
     options, arguments = p.parse_args()
     end = m.month_end_day()
     if options.day:
