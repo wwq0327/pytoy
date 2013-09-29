@@ -19,6 +19,8 @@ class MeiJuMi:
         self.url = url
 
     def month_end_day(self):
+        '''获取当月最后一天的时间数，用于使用正则时搜索相应的XX号关键词'''
+
         now = datetime.datetime.today()
         year = now.year
         month = now.month
@@ -30,16 +32,22 @@ class MeiJuMi:
             return end.day
 
     def get_day(self):
+        '''获天当天的天数'''
+
         today = datetime.datetime.today()
         return today.day
 
     def set_day_str(self, day=None):
+        '''生成搜索的XX号关键词'''
+
         if not day:
             return str(self.get_day()) + '号'
         else:
             return str(day) + '号'
 
     def get_html(self):
+        '''读取当月的美剧页面HTML代码'''
+
         r = requests.get(self.url)
         if r.status_code == 200:
             return r.content
@@ -47,12 +55,16 @@ class MeiJuMi:
             return None
     
     def get_day_html(self, html, day):
+        '''获取当天的所有html代码'''
+
         regex = r'<td class="ihbg">.+?<dt>%s</dt>(.+?)</dl>' % day
         re_day = re.compile(regex, re.DOTALL)
         m = re.findall(re_day, html)
         return m[0] 
 
     def get_jm_list(self, day_html):
+        '''获取节目单'''
+
         regex = r'<div class="floatSpan"><span>(.+?)<span></div>'
         re_jm = re.compile(regex, re.DOTALL)
         m = re.findall(re_jm, day_html)
