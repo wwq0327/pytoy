@@ -9,6 +9,9 @@ import datetime
 #from datetime import datetime
 import requests
 
+reload(sys)
+sys.setdefaultenconding('utf-8')
+
 URL = 'http://www.yyets.com/tv/schedule'
 
 def month_end_day():
@@ -45,7 +48,6 @@ def get_html(url):
         return None
 
 def get_day_html(html, day):
-    #day = set_day_str()
     regex = r'<td class="ihbg">.+?<dt>%s</dt>(.+?)</dl>' % day
     re_day = re.compile(regex, re.DOTALL)
     m = re.findall(re_day, html)
@@ -63,7 +65,6 @@ def main():
             usage="%prog [day]")
     p.add_option('--day', '-d')
     options, arguments = p.parse_args()
-    #print options, arguments
     end = month_end_day()
     if options.day:
         if len(arguments) == 0:
