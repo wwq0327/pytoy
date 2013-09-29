@@ -30,7 +30,7 @@ def backup(db_name_list):
         db = db.strip()
         if db == 'information_schema':
             continue
-        if not os.path.exists('db'):
+        if not os.path.exists(os.path.join(BACKUP, db)):
             os.mkdir(os.path.join(BACKUP, db))
         filename = '%s/%s/%s-%s.sql' % (BACKUP, db, db, filetamp)
         cmd = 'mysqldump -u%s -p%s -h%s --default_character-set=%s -e --opt -c %s | gzip -c > %s.gz'\
