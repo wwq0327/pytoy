@@ -9,8 +9,8 @@ import datetime
 #from datetime import datetime
 import requests
 
-reload(sys)
-sys.setdefaultenconding('utf-8')
+#reload(sys)
+#sys.setdefaultenconding('utf-8')
 
 URL = 'http://www.yyets.com/tv/schedule'
 
