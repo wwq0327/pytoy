@@ -57,17 +57,18 @@ class MeiJuMi:
     def get_day_html(self, html, day):
         '''获取当天的所有html代码'''
 
-        regex = r'<td class="ihbg">.+?<dt>%s</dt>(.+?)</dl>' % day
+        regex = r'<td class="(cur|ihbg)">.+?<dt>%s</dt>(.+?)</dl>' % day
         re_day = re.compile(regex, re.DOTALL)
-        m = re.findall(re_day, html)
-        return m[0] 
+        m = re_day.findall(html)
+        #print m[0][1]
+        return m[0][1] 
 
     def get_jm_list(self, day_html):
         '''获取节目单'''
 
         regex = r'<div class="floatSpan"><span>(.+?)<span></div>'
         re_jm = re.compile(regex, re.DOTALL)
-        m = re.findall(re_jm, day_html)
+        m = re_jm.findall(day_html)
         return m
 
 def main():
