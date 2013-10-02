@@ -29,7 +29,6 @@ class OpenClass:
         regex = r'<li class="f-fl">\s+<a href="(http://v.163.com/movie/.+?)" class="listT">.+?<p>(.+?)<(/p|p)>.+?</a>\s+</li>'
         p_re = re.compile(regex, re.DOTALL)
         pages_list = p_re.findall(html)
-        #print len(pages_list)
         return pages_list
 
     def get_video_url(self, url):
@@ -71,6 +70,15 @@ class OpenClass:
             video_list.append((p, page[1].decode('gb2312').encode('utf-8')))
         return video_list
 
+    def down_file(self, vs):
+        f = open('video.sh', 'w')
+        for v in vs:
+            filename = "%s.%s" % (v[1], os.path.split(v[0])[1])
+            cmd = 'wget -o %s %s' % (filename, v[0])
+            f.write(cmd)
+
+        f.close()
+
 def main():
     oc = OpenClass(TED_URL)
     
@@ -79,7 +87,7 @@ def main():
     page_list = oc.get_ted_page(html)
     page = oc.play_page(page_list)
     vs = oc.filter_url(page)
-    print oc.video(vs)
+    oc.down_file(oc.video(vs))
 
 if __name__ == '__main__':
     main()
