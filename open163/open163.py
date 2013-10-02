@@ -38,17 +38,38 @@ class OpenClass:
             html = r.content
         else:
             html = None
-        p = re.compile(r'appsrc: \'http://mov\.bn\.netease\.com/.+?\.m3u8\',', re.DOTALL)
+        p = re.compile(r'appsrc: \'(http://mov\.bn\.netease\.com/.+?\.m3u8)\',', re.DOTALL)
         end = p.findall(html)
 
         return end[0]
+    
+    def filter_url(self, video_list):
+        '''过滤无用的列表'''
 
+        nofile = 'http://mov.bn.netease.com/movie/nofile/list.m3u8'
+        vl = []
+        for i in xrange(len(video_list)):
+            if not video_list[i][0] == nofile:
+                vl.append(video_list[i])
+
+        return vl
+    def video(self, vl):
+        vs = []
+        for l in vl:
+            if l[0].find('open-movie'):
+                vs.append((l[0].replace('m3u8', 'mp4'), l[1]))
+            else:
+                vs.append((l[0].replace('m3u8', 'flv'), l[1]))
+
+        return vs
+    
     def play_page(self, page_list):
-        for page in page_list:
+        '''单个视频页面链接列表'''
+        video_list = []
+        for page in page_list[:50]:
             p = self.get_video_url(page[0])
-            print p
-            #print "%s ==> %s" % (page[0], page[1].decode('gb2312').encode('utf-8'))
-
+            video_list.append((p, page[1].decode('gb2312').encode('utf-8')))
+        return video_list
 
 def main():
     oc = OpenClass(TED_URL)
@@ -56,7 +77,9 @@ def main():
     html = oc.get_html()
     #print html
     page_list = oc.get_ted_page(html)
-    print oc.play_page(page_list)
+    page = oc.play_page(page_list)
+    vs = oc.filter_url(page)
+    print oc.video(vs)
 
 if __name__ == '__main__':
     main()
