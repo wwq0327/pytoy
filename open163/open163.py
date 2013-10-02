@@ -3,6 +3,7 @@
 # wwq @ 2013-10-02 09:58:10
 
 import sys
+import os
 import re
 import requests
 
@@ -73,8 +74,8 @@ class OpenClass:
     def down_file(self, vs):
         f = open('video.sh', 'w')
         for v in vs:
-            filename = "%s.%s" % (v[1], os.path.split(v[0])[1])
-            cmd = 'wget -o %s %s' % (filename, v[0])
+            filename = "%s%s" % (v[1], os.path.splitext(v[0])[1])
+            cmd = 'wget -c -o %s %s\n' % (filename, v[0])
             f.write(cmd)
 
         f.close()
