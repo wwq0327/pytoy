@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # wwq @ 2013-10-02 09:58:10
+# 获取http://open.163.com 网站上的TED所有视频链接，并生成下载文件，
+# 通过Shell命令，结合wget，即可下载所有的ted视频到本地。
 
 import sys
 import os
@@ -19,9 +21,12 @@ TED_URL = 'http://open.163.com/ted'
 class OpenClass:
     def __init__(self, url):
         self.url = url
+        self.headers = {
+                'User-Agent': "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36" 
+                }
 
     def get_html(self):
-        r = requests.get(self.url)
+        r = requests.get(self.url, headers=self.headers)
         if r.status_code == 200:
             return r.content
         else:
@@ -33,18 +38,21 @@ class OpenClass:
         html = html.replace('\n', '').strip()
         regex = r'<li class="f-fl">\s+<a href="(http://v.163.com/movie/.+?)" class="listT">.+?<p>(.+?)<(/p|p)>.+?</a>\s+</li>'
         p_re = re.compile(regex, re.DOTALL)
+        print '正在解析TED首页的视频链接...'
         pages_list = p_re.findall(html)
         return pages_list
 
     def get_video_url(self, url):
-        r = requests.get(url)
+        '''在视频页面中获到.m3mu链，这个链接中会包含有相应视频的地址'''
+
+        r = requests.get(url, headers=self.headers)
         if r.status_code == 200:
             html = r.content
         else:
             html = None
         p = re.compile(r'appsrc: \'(http://mov\.bn\.netease\.com/.+?\.m3u8)\',', re.DOTALL)
         end = p.findall(html)
-
+        print '找到视频链接信息: %s' % end[0]
         return end[0]
     
     def filter_url(self, video_list):
@@ -71,6 +79,7 @@ class OpenClass:
                 url = os.path.split(l[0])
                 filename = url[1].split('-')
                 real_url = os.path.join(url[0], filename[0]+'.flv') # 生成新的文件名，再与原路径结合起来
+                print "获取到视频: %s\t%s" % (l[1], real_url)
                 vs.append((real_url, l[1]))
 
         return vs
@@ -84,14 +93,14 @@ class OpenClass:
         return video_list
 
     def down_file(self, vs):
-        # 生成一个可执行的.sh文件 
-        print '正在解析网站页面，并生成可下载文件，需要两三分钟，请等待！'
+        '''生成一个可执行的.sh文件'''
+
         f = open('video.sh', 'w')
         for v in vs:
             filename = "%s%s" % (v[1], os.path.splitext(v[0])[1])
             cmd = 'wget -c -O %s %s\n' % (filename, v[0])
             f.write(cmd)
-        print '下载文件已生成，在Linux中，你可以执行 sh %s 开始下载!' % filename
+        print '下载文件已生成，在Linux中，你可以执行 sh video.sh 开始下载!'
         f.close()
 
 def main():
