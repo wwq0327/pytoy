@@ -79,7 +79,7 @@ class OpenClass:
                 url = os.path.split(l[0])
                 filename = url[1].split('-')
                 real_url = os.path.join(url[0], filename[0]+'.flv') # 生成新的文件名，再与原路径结合起来
-                print "获取到视频: %s\t%s" % (l[1], real_url)
+                #print "获取到视频: %s\t%s" % (l[1], real_url)
                 vs.append((real_url, l[1]))
 
         return vs
