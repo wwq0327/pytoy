@@ -5,7 +5,11 @@
 import sys
 import os
 import re
-import requests
+try:
+    import requests
+except:
+    print >>sys.stderr, "本程序依赖requests, 请先安装requests库"
+    sys.exit(1)
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -57,12 +61,16 @@ class OpenClass:
     def video(self, vl):
         vs = []
         for l in vl:
+            # 所得到的链接有两类，一类是.mp4文件，一类是.flv文件，
+            # 可以根据链接中是否合有'open-movie' 和'movie'进行区分
+            # 对于.flv文件，需在对链接作处理
             if 'open-movie' in l[0].strip('/'):
                 vs.append((l[0].replace('m3u8', 'mp4'), l[1]))
             else:
+                # 得到的链接中会多含一个-list，需要去除掉
                 url = os.path.split(l[0])
                 filename = url[1].split('-')
-                real_url = os.path.join(url[0], filename[0]+'.flv')
+                real_url = os.path.join(url[0], filename[0]+'.flv') # 生成新的文件名，再与原路径结合起来
                 vs.append((real_url, l[1]))
 
         return vs
@@ -76,19 +84,20 @@ class OpenClass:
         return video_list
 
     def down_file(self, vs):
+        # 生成一个可执行的.sh文件 
+        print '正在解析网站页面，并生成可下载文件，需要两三分钟，请等待！'
         f = open('video.sh', 'w')
         for v in vs:
             filename = "%s%s" % (v[1], os.path.splitext(v[0])[1])
-            cmd = 'wget -c -N -O %s %s\n' % (filename, v[0])
+            cmd = 'wget -c -O %s %s\n' % (filename, v[0])
             f.write(cmd)
-
+        print '下载文件已生成，在Linux中，你可以执行 sh %s 开始下载!' % filename
         f.close()
 
 def main():
     oc = OpenClass(TED_URL)
     
     html = oc.get_html()
-    #print html
     page_list = oc.get_ted_page(html)
     page = oc.play_page(page_list)
     vs = oc.filter_url(page)
