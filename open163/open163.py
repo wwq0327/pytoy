@@ -53,20 +53,24 @@ class OpenClass:
                 vl.append(video_list[i])
 
         return vl
+
     def video(self, vl):
         vs = []
         for l in vl:
-            if l[0].find('open-movie'):
+            if 'open-movie' in l[0].strip('/'):
                 vs.append((l[0].replace('m3u8', 'mp4'), l[1]))
             else:
-                vs.append((l[0].replace('m3u8', 'flv'), l[1]))
+                url = os.path.split(l[0])
+                filename = url[1].split('-')
+                real_url = os.path.join(url[0], filename[0]+'.flv')
+                vs.append((real_url, l[1]))
 
         return vs
     
     def play_page(self, page_list):
         '''单个视频页面链接列表'''
         video_list = []
-        for page in page_list[:50]:
+        for page in page_list:
             p = self.get_video_url(page[0])
             video_list.append((p, page[1].decode('gb2312').encode('utf-8')))
         return video_list
@@ -75,7 +79,7 @@ class OpenClass:
         f = open('video.sh', 'w')
         for v in vs:
             filename = "%s%s" % (v[1], os.path.splitext(v[0])[1])
-            cmd = 'wget -c -o %s %s\n' % (filename, v[0])
+            cmd = 'wget -c -N -O %s %s\n' % (filename, v[0])
             f.write(cmd)
 
         f.close()
