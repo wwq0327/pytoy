@@ -13,6 +13,14 @@ except:
     print >>sys.stderr, "本程序依赖requests, 请先安装requests库"
     sys.exit(1)
 
+#try:
+#    import gevent
+#    from gevent import monkey;monkey.patch_all()
+#except:
+#    print >>sys.stderr, "本程序依赖gevent, 请先安装gevent库"
+#    sys.exit(1)
+
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -25,8 +33,8 @@ class OpenClass:
                 'User-Agent': "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36" 
                 }
 
-    def get_html(self):
-        r = requests.get(self.url, headers=self.headers)
+    def get_html(self,url):
+        r = requests.get(url, headers=self.headers)
         if r.status_code == 200:
             return r.content
         else:
@@ -45,11 +53,12 @@ class OpenClass:
     def get_video_url(self, url):
         '''在视频页面中获到.m3mu链，这个链接中会包含有相应视频的地址'''
 
-        r = requests.get(url, headers=self.headers)
-        if r.status_code == 200:
-            html = r.content
-        else:
-            html = None
+        #r = requests.get(url, headers=self.headers)
+        #if r.status_code == 200:
+        #    html = r.content
+        #else:
+        #    html = None
+        html = self.get_html(url)
         p = re.compile(r'appsrc: \'(http://mov\.bn\.netease\.com/.+?\.m3u8)\',', re.DOTALL)
         end = p.findall(html)
         print '找到视频链接信息: %s' % end[0]
@@ -106,7 +115,7 @@ class OpenClass:
 def main():
     oc = OpenClass(TED_URL)
     
-    html = oc.get_html()
+    html = oc.get_html(oc.url)
     page_list = oc.get_ted_page(html)
     page = oc.play_page(page_list)
     vs = oc.filter_url(page)
