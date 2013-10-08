@@ -11,15 +11,14 @@ queue = Queue()
 
 def gen_ips():
     ips = []
-    for num in xrange(100, 150):
+    for num in xrange(100, 120):
         ip = '192.168.1.%s' % num
         ips.append(ip)
     return ips
 
-def pinger(i, q):
+def pinger(q):
     while True:
         ip = q.get() # 接收执行参数
-        #print "Thread %s : Pinging %s" % (i, ip)
         ret = subprocess.call('ping -c 1 %s' % ip,
                 shell=True,
                 stdout=open('/dev/null', 'w'),
@@ -33,7 +32,7 @@ def pinger(i, q):
 def run():
     # 线程设置
     for i in range(num_threads):
-        worker = Thread(target=pinger, args=(i, queue))
+        worker = Thread(target=pinger, args=(queue,))
         worker.setDaemon(True)
         worker.start()
 
