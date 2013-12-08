@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<script src="http://s.segmentfault.com/js/jquery.js?13.11.12.2"></script>
+    <script type="text/javascript">
+      function ch() {
+      var w_h = $(window).height();
+      var text_h = w_h - 58 - 50;
+      //alert(text_h);
+      $(".text").attr("style", "height:"+text_h+"px;");
+      };
+      $(document).ready(function() {
+      ch();
+      });
+
+      $(window).resize(function() {
+      ch();
+      });
+
+    </script>
+    <title>test</title>
+    <link href="main.css" rel="stylesheet">
+  </head>
+  <body>
+    <from class="my-form">
+      <input type="text" class="my-title" style="display: none">
+      <textarea class="text"></textarea>
+    </from>
+
+  </body>
+</html>
