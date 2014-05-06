@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import re
 import sys
 import urllib2
@@ -16,6 +17,10 @@ def dict(html):
 	re_dt = re.compile(regex, re.DOTALL)
 	m = re_dt.findall(html)
 	## print len(m)
+
+	if not m:
+		print "你要查询的单词没有找到"
+		sys.exit(0)
 	return m
 
 def html_format(s):
