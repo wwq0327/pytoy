@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os, sys
 from datetime import datetime
 
@@ -35,6 +37,7 @@ def main():
 	title = sys.argv[1]
 	filename = post_name(title)
 	write_to_file(filename)
+	print "New file path: %s" % filename
 
 if __name__ == '__main__':
 	main()
