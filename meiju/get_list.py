@@ -51,8 +51,7 @@ class MeiJuMi:
         r = requests.get(self.url)
         if r.status_code == 200:
             return r.content
-        else:
-            return None
+        return None
     
     def get_day_html(self, html, day):
         '''获取当天的所有html代码'''
