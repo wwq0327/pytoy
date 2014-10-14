@@ -7,7 +7,7 @@ import subprocess
 urls = ['http://www.baidu.com',
         'http://bing.com',
         'http://python.org']
-cmd = 'ping -c 2 %s'
+cmd = 'ping -c 4 %s'
 
 def ping(url):
     ps = subprocess.Popen(cmd%url, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -28,5 +28,9 @@ def main():
     for i in nloops:
         threads[i].join()
 
+def test():
+    for url in urls:
+        ping(url)
+
 if __name__ == '__main__':
-    main()
+    test()

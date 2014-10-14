@@ -6,6 +6,15 @@ from time import sleep, ctime
 
 loops = [4, 2]
 
+class ThreadFunc(object):
+    def __init__(self, func, args, name=''):
+        self.name = name
+        self.func = func
+        self.args = args
+
+    def __call__(self):
+        apply(self.func, self.args)
+
 def loop(nloop, nsec):
     print 'start loop', nloop, 'at:', ctime()
     sleep(nsec)
@@ -17,7 +26,7 @@ def main():
     nloops = range(len(loops))
     for i in nloops:
         # 创建线程
-        t = threading.Thread(target=loop, args=(i, loops[i]))
+        t = threading.Thread(target=ThreadFunc(loop, (i, loops[i]), loop.__name__))
         threads.append(t)
     # start threads
     for i in nloops:
