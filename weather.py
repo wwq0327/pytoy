@@ -33,6 +33,7 @@ def main():
     else:
         print("USAGE: \n\tpython weather.py CITYPINYIN_NAME")
 
+
 if __name__ == '__main__':
     main()
 
